@@ -1,4 +1,6 @@
-package datatypes;
+package exceptions;
+
+import datatypes.LineName;
 
 public class NoSuchLineException extends Exception {
 

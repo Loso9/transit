@@ -1,4 +1,4 @@
-package datatypes;
+package exceptions;
 
 public class NegativeCapacityException extends Exception {
 
