@@ -39,7 +39,7 @@ public class Triplet<P, Q, R> {
 
     @Override
     public String toString() {
-        return "(" + first + "," + second + "," + third + ")";
+        return "(" + first.toString() + "," + second.toString() + "," + third.toString() + ")";
     }
 
     @Override

@@ -2,14 +2,14 @@ package datatypes;
 
 import java.util.Objects;
 
-public class Quartet<P, R, Q, S> {
+public class Quartet<P, Q, R, S> {
 
     private P first;
-    private R second;
-    private Q third;
+    private Q second;
+    private R third;
     private S forth;
 
-    public Quartet(P first, R second, Q third, S forth) {
+    public Quartet(P first, Q second, R third, S forth) {
         this.first = first;
         this.second = second;
         this.third = third;
@@ -20,11 +20,11 @@ public class Quartet<P, R, Q, S> {
         return first;
     }
 
-    public R getSecond() {
+    public Q getSecond() {
         return second;
     }
 
-    public Q getThird() {
+    public R getThird() {
         return third;
     }
 
@@ -36,11 +36,11 @@ public class Quartet<P, R, Q, S> {
         this.first = first;
     }
 
-    public void setSecond(R second) {
+    public void setSecond(Q second) {
         this.second = second;
     }
 
-    public void setThird(Q third) {
+    public void setThird(R third) {
         this.third = third;
     }
 
@@ -63,6 +63,6 @@ public class Quartet<P, R, Q, S> {
 
     @Override
     public String toString() {
-        return "(" + first + "," + second + "," + third + "," + forth + ")";
+        return "(" + first.toString() + "," + second.toString() + "," + third.toString() + "," + forth.toString() + ")";
     }
 }
