@@ -1,16 +1,18 @@
 package main;
 
 import datatypes.*;
+import exceptions.NoSuchLineException;
+
 import java.util.*;
 
 public class Stop implements StopInterface {
 
-    private final String stopName;
+    private final StopName stopName;
     private Time reachableAt;
     private LineName reachableVia;
     private final ArrayList<LineName> lines;
 
-    public Stop(String stopName, List<LineName> lines) {
+    public Stop(StopName stopName, List<LineName> lines) {
         this.stopName = stopName;
         this.lines = new ArrayList<>(lines);
         //temporary init
@@ -19,7 +21,7 @@ public class Stop implements StopInterface {
     }
 
     @Override
-    public String getStopName() {
+    public StopName getStopName() {
         return stopName;
     }
 
@@ -37,10 +39,9 @@ public class Stop implements StopInterface {
     @Override
     public void updateReachableAt(Time time, LineName lineName) {
         Time newTime = Optional.ofNullable(time).orElseThrow(NullPointerException::new);
-        LineName newLineName = Optional.ofNullable(lineName).orElseThrow(NullPointerException::new);
         if (newTime.getTime() < reachableAt.getTime()) {
             reachableAt = newTime;
-            reachableVia = newLineName;
+            reachableVia = lineName;
         }
     }
 
