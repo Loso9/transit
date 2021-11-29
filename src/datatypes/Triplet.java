@@ -38,6 +38,11 @@ public class Triplet<P, Q, R> {
     }
 
     @Override
+    public String toString() {
+        return "(" + first + "," + second + "," + third + ")";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -26,4 +26,9 @@ public class Time {
     public int getTime() {
         return time;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(time);
+    }
 }
