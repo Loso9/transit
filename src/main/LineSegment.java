@@ -42,7 +42,7 @@ public class LineSegment implements LineSegmentInterface {
         Time nextStopTime = new Time(timeToNextStop.getTimeDiff() + time.getTime());
         boolean freeSeats = false;
         if (numberOfPassengers.get(time) < capacity) {
-            nextStop.updateReachableAt(nextStopTime, Optional.ofNullable(lineName));
+            nextStop.updateReachableAt(nextStopTime, lineName);
             freeSeats = true;
         }
         return new Triplet<>(nextStopTime, nextStop.getStopName(), freeSeats);
