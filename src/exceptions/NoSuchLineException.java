@@ -19,6 +19,6 @@ public class NoSuchLineException extends Exception {
         if (lineName == null) {
             return "No such line exists.";
         }
-        else return "No such line with name \"" + lineName.getName() + "\" exists.";
+        return "No such line with name \"" + lineName.getName() + "\" exists.";
     }
 }
