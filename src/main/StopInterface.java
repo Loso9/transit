@@ -1,7 +1,6 @@
 package main;
 
 import datatypes.*;
-
 import java.util.*;
 
 public interface StopInterface {
