@@ -6,6 +6,10 @@ public class TimeDiff {
 
     private final int timeDiff;
 
+    public TimeDiff(int timeDiff) {
+        this.timeDiff = timeDiff;
+    }
+
     public TimeDiff(Time time1, Time time2) {
         timeDiff = time1.getTime() - time2.getTime();
     }
