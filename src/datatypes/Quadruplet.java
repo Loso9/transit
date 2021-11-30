@@ -2,14 +2,14 @@ package datatypes;
 
 import java.util.Objects;
 
-public class Quartet<P, Q, R, S> {
+public class Quadruplet<P, Q, R, S> {
 
     private P first;
     private Q second;
     private R third;
     private S forth;
 
-    public Quartet(P first, Q second, R third, S forth) {
+    public Quadruplet(P first, Q second, R third, S forth) {
         this.first = first;
         this.second = second;
         this.third = third;
@@ -52,8 +52,8 @@ public class Quartet<P, Q, R, S> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Quartet<?, ?, ?, ?> quartet = (Quartet<?, ?, ?, ?>) o;
-        return Objects.equals(first, quartet.first) && Objects.equals(second, quartet.second) && Objects.equals(third, quartet.third) && Objects.equals(forth, quartet.forth);
+        Quadruplet<?, ?, ?, ?> quadruplet = (Quadruplet<?, ?, ?, ?>) o;
+        return Objects.equals(first, quadruplet.first) && Objects.equals(second, quadruplet.second) && Objects.equals(third, quadruplet.third) && Objects.equals(forth, quadruplet.forth);
     }
 
     @Override
