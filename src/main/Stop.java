@@ -31,8 +31,8 @@ public class Stop implements StopInterface {
 
     @Override
     public Pair<Time, LineName> getReachableAt() {
-        LineName reachableLine = Optional.ofNullable(reachableVia).orElseThrow(NullPointerException::new);
-        return new Pair<>(reachableAt, reachableLine);
+        Optional<LineName> reachableLine = Optional.ofNullable(reachableVia);
+        return reachableLine.map(lineName -> new Pair<>(reachableAt, lineName)).orElseGet(() -> new Pair<>(reachableAt, null));
     }
 
     @Override
