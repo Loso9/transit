@@ -45,4 +45,9 @@ public class Stop implements StopInterface {
         }
     }
 
+    @Override
+    public Pair<StopName, List<LineName>> convertToPair() {
+        return new Pair<>(stopName, lines);
+    }
+
 }
