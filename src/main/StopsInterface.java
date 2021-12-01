@@ -1,12 +1,17 @@
 package main;
 
 import datatypes.*;
+import exceptions.*;
+
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public interface StopsInterface {
-    Optional<Pair<List<StopName>, Time>> earliestReachableStopAfter(Time startTime); //potentially more stops -> list of StopName
-    boolean setStartingStop(StopName stopName, Time time);
-    List<LineName> getLines(StopName stopName);
-    Pair<Time, LineName> getReachableAt(StopName stopName);
+    Optional<Pair<StopName, Time>> earliestReachableStopAfter(Time time);
+    void setStartingStop(StopName stopName, Time time) throws AlreadyLoadedStopException, FileNotFoundException;
+    List<LineName> getLines(StopName stopName) throws AlreadyLoadedStopException, FileNotFoundException;
+    Pair<Time, LineName> getReachableAt(StopName stopName) throws NotLoadedStopException;
+    boolean isStopLoaded(StopName stopName);
+    StopInterface getStop(StopName stopName) throws NotLoadedStopException;
     void clean();
 }
