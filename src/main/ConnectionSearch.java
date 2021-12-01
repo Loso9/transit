@@ -36,7 +36,7 @@ public class ConnectionSearch {
             }
             return connection;
         }
-        catch (AlreadyLoadedStopException | AlreadyLoadedLineException | FileNotFoundException e) {
+        catch (AlreadyLoadedStopException | AlreadyLoadedLineException | FileNotFoundException | NegativeCapacityException e) {
             System.out.println(e.getMessage());
             return null;
         }
