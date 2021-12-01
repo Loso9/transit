@@ -1,0 +1,4 @@
+15
+Trnava - 5 8 9 10 		
+Bratislava 11 0 0 0 0
+Kosice 13 0 0 0 0
