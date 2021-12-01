@@ -5,8 +5,9 @@ import java.util.*;
 
 public interface LineInterface {
     void updateReachable(Time time, StopName stopName);
-    void updateCapacityAndGetPreviousStop(StopName stopName, Time time);
+    StopName updateCapacityAndGetPreviousStop(StopName stopName, Time time);
     String getName();
     StopName getFirstStop();
-    List<LineSegment> getLineSegments();
+    List<LineSegmentInterface> getLineSegments();
+    Quadruplet<LineName, StopName, List<LineSegmentInterface>, List<Time>> convertToQuadruplet();
 }

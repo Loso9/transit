@@ -8,5 +8,6 @@ public interface StopInterface {
     Pair<Time, LineName> getReachableAt();
     void updateReachableAt(Time time, LineName lineName);
     StopName getStopName();
+    Pair<StopName, List<LineName>> convertToPair();
 
 }
