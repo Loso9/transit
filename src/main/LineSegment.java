@@ -72,4 +72,9 @@ public class LineSegment implements LineSegmentInterface {
         throw new NoSuchElementException("No such bus arrives at the stop at that time.");
     }
 
+    @Override
+    public Quintuplet<TimeDiff, Map<Time, Integer>, Integer, LineName, StopInterface> convertToQuintuplet() {
+        return new Quintuplet<>(timeToNextStop, numberOfPassengers, capacity, lineName, nextStop);
+    }
+
 }
