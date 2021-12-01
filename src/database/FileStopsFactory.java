@@ -34,6 +34,7 @@ public class FileStopsFactory implements StopsFactoryInterface {
                 }
             }
         }
+        fileScanner.close();
         //if it was found, return stop with according lines
         if (found) {
             Stop newStop = new Stop(stopName, stopLines);
@@ -43,18 +44,9 @@ public class FileStopsFactory implements StopsFactoryInterface {
         return Optional.empty();
     }
 
-    private Integer checkIfContains(StopName stopName) {
-        int index = 0;
-        for (Pair<StopName, List<LineName>> stop : stops) {
-            if (stop.getFirst().equals(stopName)) {
-                return index;
-            }
-            index++;
-        }
-        return null;
-    }
-
-    public List<Pair<StopName, List<LineName>>> getCurrentLoadedStops() {
+    //loaded stops
+    @Override
+    public List<Pair<StopName, List<LineName>>> getStops() {
         return stops;
     }
 }
