@@ -3,4 +3,4 @@
 ### Review by Martin Hošek
 - Finish necessary methods
 - Write tests for untested classes
-- Refactor code to be simplier and more understandable
+- Refactor code to be simpler and more understandable
