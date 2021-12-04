@@ -2,8 +2,6 @@ package main;
 
 import database.StopsFactoryInterface;
 import datatypes.*;
-import exceptions.*;
-
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -19,25 +17,28 @@ public class Stops implements StopsInterface {
 
     @Override
     public Optional<Pair<StopName, Time>> earliestReachableStopAfter(Time time) {
-        StopInterface earliestReachableStopAfter = null; //init
+        //if there wasnt assumption in the diagram that no starting times were different
+        // - then we would have to return List of StopNames
+        StopName earliestReachableStopAfter = null; //init
         Time minTime = new Time(Integer.MAX_VALUE); //init for finding min
         for (Map.Entry<StopName, StopInterface> stop : stops.entrySet()) {
             StopInterface forStop = stop.getValue();
             Time forStopReachableAt = forStop.getReachableAt().getFirst();
-            if (forStopReachableAt.getTime() > time.getTime())
+            if (forStopReachableAt.getTime() > time.getTime()) {
                 if (forStopReachableAt.getTime() < minTime.getTime()) {
                     minTime = forStopReachableAt;
-                    earliestReachableStopAfter = forStop;
+                    earliestReachableStopAfter = forStop.getStopName();
                 }
+            }
         }
         if (earliestReachableStopAfter == null) {
-            return Optional.of(new Pair<>(null, minTime));
+            return Optional.empty();
         }
-        return Optional.of(new Pair<>(earliestReachableStopAfter.getStopName(), minTime));
+        return Optional.of(new Pair<>(earliestReachableStopAfter, minTime));
     }
 
     @Override
-    public void setStartingStop(StopName stopName, Time time) throws AlreadyLoadedStopException, FileNotFoundException {
+    public void setStartingStop(StopName stopName, Time time) throws FileNotFoundException {
         if (!isStopLoaded(stopName)) {
             loadStop(stopName);
         }
@@ -45,7 +46,7 @@ public class Stops implements StopsInterface {
     }
 
     @Override
-    public List<LineName> getLines(StopName stopName) throws AlreadyLoadedStopException, FileNotFoundException {
+    public List<LineName> getLines(StopName stopName) throws FileNotFoundException {
         if (!isStopLoaded(stopName)) {
             loadStop(stopName);
         }
@@ -53,9 +54,9 @@ public class Stops implements StopsInterface {
     }
 
     @Override
-    public Pair<Time, LineName> getReachableAt(StopName stopName) throws NotLoadedStopException {
+    public Pair<Time, LineName> getReachableAt(StopName stopName) throws FileNotFoundException {
         if (!isStopLoaded(stopName)) {
-            throw new NotLoadedStopException(stopName);
+            loadStop(stopName);
         }
         return stops.get(stopName).getReachableAt();
     }
@@ -66,9 +67,9 @@ public class Stops implements StopsInterface {
     }
 
     @Override
-    public StopInterface getStop(StopName stopName) throws NotLoadedStopException {
+    public StopInterface getStop(StopName stopName) throws FileNotFoundException {
         if (!isStopLoaded(stopName)) {
-            throw new NotLoadedStopException(stopName);
+            loadStop(stopName);
         }
         return stops.get(stopName);
     }
@@ -78,9 +79,10 @@ public class Stops implements StopsInterface {
         stops = new HashMap<>();
     }
 
-    private void loadStop(StopName stopName) throws AlreadyLoadedStopException, FileNotFoundException {
+    private void loadStop(StopName stopName) throws FileNotFoundException {
         if (isStopLoaded(stopName)) {
-            throw new AlreadyLoadedStopException(stopName);
+            System.out.println("Stop " + stopName.getName() + " has already been loaded");
+            return;
         }
         Optional<StopInterface> stop = stopsFactory.createStop(stopName);
         if (stop.isEmpty()) {
