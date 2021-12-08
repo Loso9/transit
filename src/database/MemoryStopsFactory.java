@@ -6,25 +6,24 @@ import main.*;
 
 public class MemoryStopsFactory implements StopsFactoryInterface {
 
-    private final List<Pair<StopName, List<LineName>>> stops;
+    private final List<StopInterface> stops;
 
     public MemoryStopsFactory(MemoryDatabase mdb) {
-        this.stops = mdb.readStopsAsPairs();
+        this.stops = mdb.readStops();
     }
 
     @Override
     public Optional<StopInterface> createStop(StopName stopName) {
-        for (Pair<StopName, List<LineName>> stop : stops) {
-            if (stop.getFirst().equals(stopName)) {
-                return Optional.of(new Stop(stopName, stop.getSecond()));
+        for (StopInterface stop : stops) {
+            if (stop.getStopName().equals(stopName)) {
+                return Optional.of(new Stop(stopName, stop.getLines()));
             }
         }
         return Optional.empty();
     }
 
     @Override
-    public List<Pair<StopName, List<LineName>>> getStops() {
-        return stops;
+    public List<StopInterface> getStops() {
+        return this.stops;
     }
-
 }
