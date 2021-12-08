@@ -99,6 +99,6 @@ public class Stops implements StopsInterface {
     }
 
     public Map<StopName, StopInterface> getStops() {
-        return stops;
+        return this.stops;
     }
 }
