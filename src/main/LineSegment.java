@@ -34,27 +34,27 @@ public class LineSegment implements LineSegmentInterface {
 
     @Override
     public TimeDiff getTimeToNextStop() {
-        return timeToNextStop;
+        return this.timeToNextStop;
     }
 
     @Override
     public int getCapacity() {
-        return capacity;
+        return this.capacity;
     }
 
     @Override
     public LineName getLineName() {
-        return lineName;
+        return this.lineName;
     }
 
     @Override
     public StopInterface getNextStop() {
-        return nextStop;
+        return this.nextStop;
     }
 
     @Override
     public int getSegmentIndex() {
-        return segmentIndex;
+        return this.segmentIndex;
     }
 
     @Override
@@ -101,12 +101,12 @@ public class LineSegment implements LineSegmentInterface {
 
     @Override
     public Map<Time, Integer> getBuses() {
-        return numberOfPassengers;
+        return this.numberOfPassengers;
     }
 
     @Override
     public boolean wasUpdated() {
-        return wasUpdated;
+        return this.wasUpdated;
     }
 
     @Override
