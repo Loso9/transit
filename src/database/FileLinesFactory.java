@@ -167,13 +167,15 @@ public class FileLinesFactory implements LinesFactoryInterface {
     //have not found a good way to update single point (x,y) in text file other than deleting whole content and putting it back
     @Override
     public void updateDatabase(List<LineSegmentInterface> updatedSegments) throws FileNotFoundException {
+        List<LineSegmentInterface> segmentsToBeRemoved = new ArrayList<>();
+        List<LineSegmentInterface> segmentsToBeUpdated = new ArrayList<>();
         for (LineSegmentInterface lineSegment : updatedSegments) {
             //inner update
             if (checkIfContainsSegment(lineSegment.getLineName(), lineSegment.getSegmentIndex())) { //if contains remove old one and put updated one
                 for (LineSegmentInterface oldSegment : lineSegments) { //pinpoint the oldSegment which needs to be updated
                     if (oldSegment.getLineName().equals(lineSegment.getLineName()) && oldSegment.getSegmentIndex() == lineSegment.getSegmentIndex()) {
-                        lineSegments.remove(oldSegment);
-                        lineSegments.add(lineSegment);
+                        segmentsToBeRemoved.add(oldSegment);
+                        segmentsToBeUpdated.add(lineSegment);
                     }
                     break;
                 }
@@ -184,6 +186,8 @@ public class FileLinesFactory implements LinesFactoryInterface {
             }
         }
 
+        lineSegments.removeAll(segmentsToBeRemoved);
+        lineSegments.addAll(segmentsToBeUpdated);
         //get files which need to be updated
         Map<LineName, List<LineSegmentInterface>> linesToBeUpdated = new HashMap<>();
         for (LineInterface line : lines) {
