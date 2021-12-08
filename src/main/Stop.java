@@ -21,12 +21,12 @@ public class Stop implements StopInterface {
 
     @Override
     public StopName getStopName() {
-        return stopName;
+        return this.stopName;
     }
 
     @Override
     public List<LineName> getLines() {
-        return lines;
+        return this.lines;
     }
 
     @Override

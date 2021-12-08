@@ -174,12 +174,12 @@ public class FileLinesFactory implements LinesFactoryInterface {
 
     @Override
     public List<LineInterface> getLines() {
-        return lines;
+        return this.lines;
     }
 
     @Override
     public List<LineSegmentInterface> getSegments() {
-        return lineSegments;
+        return this.lineSegments;
     }
 
     //have not found a good way to update single point (x,y) in text file other than deleting whole content and putting it back

@@ -85,6 +85,6 @@ public class Lines implements LinesInterface {
 
     @Override
     public Map<LineName, LineInterface> getLines() {
-        return lines;
+        return this.lines;
     }
 }
