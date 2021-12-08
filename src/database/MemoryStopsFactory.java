@@ -9,7 +9,7 @@ public class MemoryStopsFactory implements StopsFactoryInterface {
     private final List<StopInterface> stops;
 
     public MemoryStopsFactory(MemoryDatabase mdb) {
-        this.stops = mdb.readStops();
+        this.stops = new ArrayList<>(mdb.readStops());
     }
 
     @Override
