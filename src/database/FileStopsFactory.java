@@ -47,6 +47,6 @@ public class FileStopsFactory implements StopsFactoryInterface {
     //loaded stops
     @Override
     public List<StopInterface> getStops() {
-        return stops;
+        return this.stops;
     }
 }
