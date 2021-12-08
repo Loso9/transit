@@ -116,6 +116,75 @@ public class LinesFactoriesTest {
         assertEquals(partizanskeStop.getStopName(), breznoPartizanske.get().getNextStop().getStopName());
 
     }
+    
+    @Test
+    public void updateDatabaseTest() throws NegativeCapacityException, NegativeSegmentIndexException {
+        setUp();
+        //going to test on Martin - Presov segment from memory database
+        //firstly will check, what are current values of linesegment variables
+        Optional<LineSegmentInterface> martinPresov = mlf.createLineSegment(lineName2, 1);
+        assertTrue(martinPresov.isPresent());
+        assertEquals(new TimeDiff(3), martinPresov.get().getTimeToNextStop());
+        assertEquals(lineName2, martinPresov.get().getLineName());
+        assertEquals(1, martinPresov.get().getSegmentIndex());
+        List<LineName> presovLineNames = new ArrayList<>();
+        StopInterface presovStop = new Stop(new StopName("Presov"), presovLineNames);
+        assertEquals(presovStop.getStopName(), martinPresov.get().getNextStop().getStopName());
+        List<Time> timesForLineSegment = new ArrayList<>();
+        timesForLineSegment.add(new Time(2));
+        timesForLineSegment.add(new Time(4));
+        timesForLineSegment.add(new Time(6));
+        timesForLineSegment.add(new Time(8));
+        timesForLineSegment.add(new Time(10));
+        Map<Time, Integer> martinPresovMap = new HashMap<>();
+        for (Time time : timesForLineSegment) {
+            Time newTime = new Time(time.getTime() + 5 + martinPresov.get().getTimeToNextStop().getTimeDiff());
+            martinPresovMap.put(newTime, 0);
+        }
+        assertEquals(martinPresovMap, martinPresov.get().getBuses());
+
+        List<LineSegmentInterface> updatedSegments = new ArrayList<>();
+        //will create linesegment with updated passengers
+        TimeDiff timeDiffToPresov = new TimeDiff(3);
+        Map<Time, Integer> numOfPassengersMartinPresov = new HashMap<>();
+        for (Time time : timesForLineSegment) {
+            Time newTime = new Time(time.getTime() + 5 + timeDiffToPresov.getTimeDiff());
+            //all times will have one passenger
+            numOfPassengersMartinPresov.put(newTime, 1);
+        }
+        int capacity = 20;
+        LineSegmentInterface martinPresovUpdatedSegment = new LineSegment(timeDiffToPresov, numOfPassengersMartinPresov, capacity, lineName2, presovStop, 1);
+        updatedSegments.add(martinPresovUpdatedSegment);
+        mlf.updateDatabase(updatedSegments);
+
+        //updated segment
+        Optional<LineSegmentInterface> martinPresovUpdated = mlf.createLineSegment(lineName2, 1);
+        assertTrue(martinPresovUpdated.isPresent());
+        assertEquals(new TimeDiff(3), martinPresov.get().getTimeToNextStop());
+        assertEquals(lineName2, martinPresovUpdated.get().getLineName());
+        assertEquals(1, martinPresovUpdated.get().getSegmentIndex());
+        List<LineName> presovLineNamesUpdated = new ArrayList<>();
+        StopInterface presovStopUpdated = new Stop(new StopName("Presov"), presovLineNamesUpdated);
+        assertEquals(presovStopUpdated.getStopName(), martinPresovUpdated.get().getNextStop().getStopName());
+        assertEquals(numOfPassengersMartinPresov, martinPresovUpdated.get().getBuses());
+
+        //other segment should stay the same
+        Optional<LineSegmentInterface> bratislavaMartin = mlf.createLineSegment(lineName2, 0);
+        assertTrue(bratislavaMartin.isPresent());
+        assertEquals(new TimeDiff(5), bratislavaMartin.get().getTimeToNextStop());
+        assertEquals(lineName2, bratislavaMartin.get().getLineName());
+        assertEquals(0, bratislavaMartin.get().getSegmentIndex());
+        List<LineName> martinLineNames = new ArrayList<>();
+        martinLineNames.add(lineName2);
+        StopInterface martinStop = new Stop(new StopName("Martin"), martinLineNames);
+        assertEquals(martinStop.getStopName(), bratislavaMartin.get().getNextStop().getStopName());
+        Map<Time, Integer> bratislavaMartinMap = new HashMap<>();
+        for (Time time : timesForLineSegment) {
+            Time newTime = new Time(time.getTime() + 5);
+            bratislavaMartinMap.put(newTime, 0);
+        }
+        assertEquals(bratislavaMartinMap, bratislavaMartin.get().getBuses());
+    }
 
     @Test(expected = NegativeSegmentIndexException.class)
     public void negativeSegmentExceptionTest() throws NegativeCapacityException, NegativeSegmentIndexException {
