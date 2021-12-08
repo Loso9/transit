@@ -371,7 +371,8 @@ public class LinesFactoriesTest {
     @Test(expected = NegativeSegmentIndexException.class)
     public void negativeSegmentExceptionTest() throws NegativeCapacityException, NegativeSegmentIndexException {
         setUp();
-        mlf.createLineSegment(new LineName("Line1"), -1);
+        mlf.createLineSegment(new LineName("Line1"), -1); //both throwing NegativeSegmentIndexException
+        flf.createLineSegment(new LineName("Line1"), -1);
     }
 
 }
