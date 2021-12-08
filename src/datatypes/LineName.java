@@ -7,6 +7,9 @@ public class LineName {
     private final String name;
 
     public LineName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Linename should not be null.");
+        }
         this.name = name;
     }
 

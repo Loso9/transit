@@ -7,6 +7,9 @@ public class StopName {
     private final String name;
 
     public StopName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Stopname should not be null.");
+        }
         this.name = name;
     }
 
