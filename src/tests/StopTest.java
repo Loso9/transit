@@ -79,23 +79,10 @@ public class StopTest {
         assertEquals(reachableTimeTest2, stop1.getReachableAt().getFirst());
         assertEquals(reachableLineTest2, stop1.getReachableAt().getSecond());
 
-        /* not sure why this doesnt work, so have to do workaround
-        //update reachable on same line, different time
-        stop1.updateReachableAt(reachableTimeTest2, reachableLineTest1);
-        assertEquals(reachableTimeTest2, stop1.getReachableAt().getFirst());
-        assertEquals(reachableLineTest1, stop1.getReachableAt().getSecond());
-        */
-
         //check, if its not reachable anymore for old time
         assertNotEquals(reachableTimeTest1, stop1.getReachableAt().getFirst());
         assertNotEquals(reachableLineTest1, stop1.getReachableAt().getSecond());
 
-        /* TEST NOT WORKING FOR SOME REASON
-        assertNotEquals(reachableTimeTest1, stop1.getReachableAt().getFirst());
-        assertNotEquals(reachableLineTest2, stop1.getReachableAt().getSecond());
-         */
-
-        //WORKAROUND
         stop1.updateReachableAt(reachableTimeTest2, reachableLineTest1);
         assertEquals(5, reachableTimeTest2.getTime());
         assertEquals("reachableLineTest1", reachableLineTest1.getName());
