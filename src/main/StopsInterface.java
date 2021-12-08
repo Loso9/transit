@@ -11,5 +11,6 @@ public interface StopsInterface {
     Pair<Time, LineName> getReachableAt(StopName stopName) throws FileNotFoundException;
     boolean isStopLoaded(StopName stopName);
     StopInterface getStop(StopName stopName) throws FileNotFoundException;
+    Map<StopName, StopInterface> getStops(); //for test purposes
     void clean();
 }
