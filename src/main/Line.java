@@ -16,10 +16,10 @@ public class Line implements LineInterface {
     public Line(LineName lineName, StopName firstStop, List<LineSegmentInterface> lineSegments, List<Time> startingTimes) {
         this.lineName = lineName;
         this.firstStop = firstStop;
-        this.lineSegments = new ArrayList<>(lineSegments);
         if (lineSegments.isEmpty() || startingTimes.isEmpty()) {
             throw new NoSuchElementException();
         }
+        this.lineSegments = new ArrayList<>(lineSegments);
         this.startingTimes = new ArrayList<>(startingTimes);
     }
 
