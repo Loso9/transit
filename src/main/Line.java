@@ -85,22 +85,22 @@ public class Line implements LineInterface {
 
     @Override
     public LineName getLineName() {
-        return lineName;
+        return this.lineName;
     }
 
     @Override
     public StopName getFirstStop() {
-        return firstStop;
+        return this.firstStop;
     }
 
     @Override
     public List<LineSegmentInterface> getLineSegments() {
-        return lineSegments;
+        return this.lineSegments;
     }
 
     @Override
     public List<Time> getStartingTimes() {
-        return startingTimes;
+        return this.startingTimes;
     }
 
     @Override
