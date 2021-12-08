@@ -11,8 +11,8 @@ public class MemoryLinesFactory implements LinesFactoryInterface {
     private final List<LineSegmentInterface> segments;
 
     public MemoryLinesFactory(MemoryDatabase mdb) {
-        lines = mdb.readLines();
-        segments = mdb.readSegments();
+        lines = new ArrayList<>(mdb.readLines());
+        segments = new ArrayList<>(mdb.readSegments());
     }
 
     @Override
@@ -65,7 +65,6 @@ public class MemoryLinesFactory implements LinesFactoryInterface {
                 }
             }
         }
-
         segments.removeAll(segmentsToBeRemoved);
         segments.addAll(segmentsToBeUpdated);
     }
