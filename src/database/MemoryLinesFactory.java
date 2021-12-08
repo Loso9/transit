@@ -53,15 +53,20 @@ public class MemoryLinesFactory implements LinesFactoryInterface {
 
     @Override
     public void updateDatabase(List<LineSegmentInterface> lineSegments) {
+        List<LineSegmentInterface> segmentsToBeRemoved = new ArrayList<>();
+        List<LineSegmentInterface> segmentsToBeUpdated = new ArrayList<>();
         for (LineSegmentInterface lineSegmentOuter : segments) {
             for (LineSegmentInterface lineSegmentInner : lineSegments) {
                 //common lineName and common segmentIndex is enough to determine linesegment
                 if (lineSegmentOuter.getLineName().equals(lineSegmentInner.getLineName()) &&
                         lineSegmentOuter.getSegmentIndex() == lineSegmentInner.getSegmentIndex()) {
-                    segments.remove(lineSegmentOuter); //remove old segment
-                    segments.add(lineSegmentInner); //add updated segment
+                    segmentsToBeRemoved.add(lineSegmentOuter); //add old lineSegment to list of lineSegments, which are going to be removed
+                    segmentsToBeUpdated.add(lineSegmentInner); //add new updated segment to list of lineSegments, which are meant to be added
                 }
             }
         }
+
+        segments.removeAll(segmentsToBeRemoved);
+        segments.addAll(segmentsToBeUpdated);
     }
 }
