@@ -8,7 +8,7 @@ import main.*;
 
 public class FileStopsFactory implements StopsFactoryInterface {
 
-    private final List<Pair<StopName, List<LineName>>> stops;
+    private final List<StopInterface> stops;
 
     public FileStopsFactory() {
         stops = new ArrayList<>();
@@ -18,10 +18,10 @@ public class FileStopsFactory implements StopsFactoryInterface {
     public Optional<StopInterface> createStop(StopName stopName) throws FileNotFoundException {
         Integer index = checkIfContains(stopName); //check if its not already loaded in stops
         if (index != null) { //it is already loaded, index is not null
-            return Optional.of(new Stop(stopName, stops.get(index).getSecond()));
+            return Optional.of(new Stop(stopName, stops.get(index).getLines()));
         }
         //look for the stopName in Stops file
-        File stopsFile = new File("Stops.txt");
+        File stopsFile = new File("src/database/Stops.txt");
         Scanner fileScanner = new Scanner(stopsFile);
         ArrayList<LineName> stopLines = new ArrayList<>();
         boolean found = false;
@@ -38,7 +38,7 @@ public class FileStopsFactory implements StopsFactoryInterface {
         //if it was found, return stop with according lines
         if (found) {
             Stop newStop = new Stop(stopName, stopLines);
-            stops.add(new Pair<>(stopName, stopLines));
+            stops.add(newStop);
             return Optional.of(newStop);
         } //return empty
         return Optional.empty();
@@ -46,7 +46,7 @@ public class FileStopsFactory implements StopsFactoryInterface {
 
     //loaded stops
     @Override
-    public List<Pair<StopName, List<LineName>>> getStops() {
+    public List<StopInterface> getStops() {
         return stops;
     }
 }
