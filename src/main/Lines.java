@@ -11,7 +11,7 @@ import java.util.*;
 
 public class Lines implements LinesInterface {
 
-    private HashMap<LineName, LineInterface> lines;
+    private Map<LineName, LineInterface> lines;
     private final LinesFactoryInterface linesFactory;
 
     //constructor for tests purposes
