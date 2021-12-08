@@ -44,18 +44,13 @@ public class FileLinesFactory implements LinesFactoryInterface {
                 StopName startStop;
                 List<LineSegmentInterface> segmentsForLine = new ArrayList<>();
                 List<Time> startingTimes = new ArrayList<>();
-                Scanner headerScanner = new Scanner(lineFileScanner.nextLine());
-
-                //String[] headerArray = this.lineFileScanner.nextLine().split("\\s+");
-                //startStop = new StopName(headerArray[0]);
-                startStop = new StopName(headerScanner.next()); //read firststop
-                /*
-                for (int i = 2; i < headerArray.length; i++) { //first index "-"
-                    startingTimes.add(new Time(Integer.parseInt(headerArray[i])));
-                }
-                 */
+                String header = lineFileScanner.nextLine();
+                Scanner headerScanner = new Scanner(header);
+                String startStopName = headerScanner.next(); //read firststop
+                startStop = new StopName(startStopName);
                 while (headerScanner.hasNext()) {
-                    startingTimes.add(new Time(headerScanner.nextInt())); //read startingtimes
+                    int timeInteger = headerScanner.nextInt();
+                    startingTimes.add(new Time(timeInteger)); //read startingtimes
                 }
                 TimeDiff totalTimeDiff = new TimeDiff(0);
                 for (int i = 0; lineFileScanner.hasNextLine(); i++) {
@@ -70,9 +65,11 @@ public class FileLinesFactory implements LinesFactoryInterface {
                         lineFileScanner.nextLine();
                         continue;
                     }
-                    Scanner segmentReader = new Scanner(lineFileScanner.nextLine());
+                    String segmentString = lineFileScanner.nextLine();
+                    Scanner segmentReader = new Scanner(segmentString);
                     Optional<StopInterface> nextStop = stopsFactory.createStop(new StopName(segmentReader.next()));
-                    TimeDiff timeToNextStop = new TimeDiff(segmentReader.nextInt());
+                    int timeDiff = segmentReader.nextInt();
+                    TimeDiff timeToNextStop = new TimeDiff(timeDiff);
                     totalTimeDiff = new TimeDiff(totalTimeDiff.getTimeDiff() + timeToNextStop.getTimeDiff());
                     int capacity = segmentReader.nextInt();
                     Map<Time, Integer> numOfPassengers = new HashMap<>();
@@ -80,7 +77,12 @@ public class FileLinesFactory implements LinesFactoryInterface {
                         Time newTime = new Time(startTime.getTime() + totalTimeDiff.getTimeDiff());
                         numOfPassengers.put(newTime, segmentReader.nextInt());
                     }
-                    LineSegmentInterface lineSegment = new LineSegment(timeToNextStop, numOfPassengers, capacity, lineName, nextStop.get(), i);
+
+                    LineSegmentInterface lineSegment;
+                    if (nextStop.isPresent()) { //just to get rid of warning of Optional, even tho every lineSegment should have nextStop as ending point
+                        lineSegment = new LineSegment(timeToNextStop, numOfPassengers, capacity, lineName, nextStop.get(), i);
+                    }
+                    else lineSegment = new LineSegment(timeToNextStop, numOfPassengers, capacity, lineName, null, i);
                     segmentsForLine.add(lineSegment);
                     lineSegments.add(lineSegment);
                 }
@@ -124,29 +126,45 @@ public class FileLinesFactory implements LinesFactoryInterface {
                 TimeDiff totalTimeDiff = new TimeDiff(0);
                 List<Time> startingTimes = new ArrayList<>();
                 Scanner headerScanner = new Scanner(lineScanner.nextLine()); //scanner on first line
-                //skip firststop
+                //skip firststop (not needed for linesegment)
                 headerScanner.next();
-                for (int i = 1; headerScanner.hasNext(); i++) {
-                    startingTimes.add(new Time(headerScanner.nextInt()));
+                //read all times and put them into list of startingTimes of line
+                while (headerScanner.hasNextInt()) {
+                    int timeInteger = headerScanner.nextInt();
+                    startingTimes.add(new Time(timeInteger));
                 }
-                int lineCounter = 0;
-                while ((lineCounter + 1) != segmentIndex) { //until we are not on the correct line, I will only read timediff
-                    Scanner rowScanner = new Scanner(lineScanner.nextLine());
-                    rowScanner.next(); //ignore stop
-                    totalTimeDiff = new TimeDiff(totalTimeDiff.getTimeDiff() + rowScanner.nextInt());
-                    lineCounter++;
+                int lineCounter = segmentIndex;
+                if (segmentIndex != 0) {
+                    while (lineCounter != 0) { //until we are not on the correct line, we will only read timediff
+                        if (!lineScanner.hasNextLine()) {
+                            throw new NoSuchElementException();
+                        }
+                        String nextLine = lineScanner.nextLine();
+                        Scanner rowScanner = new Scanner(nextLine);
+                        rowScanner.next(); //ignore stop
+                        int timeDiff = rowScanner.nextInt();
+                        totalTimeDiff = new TimeDiff(totalTimeDiff.getTimeDiff() + timeDiff);
+                        lineCounter--;
+                    }
                 }
                 //we are on the correct line
-                Optional<StopInterface> nextStop = stopsFactory.createStop(new StopName(lineScanner.next()));
-                TimeDiff timeToNextStop = new TimeDiff(lineScanner.nextInt());
+                String stopName = lineScanner.next();
+                Optional<StopInterface> nextStop = stopsFactory.createStop(new StopName(stopName));
+                int timeDiffToNextStop = lineScanner.nextInt();
+                TimeDiff timeToNextStop = new TimeDiff(timeDiffToNextStop);
                 totalTimeDiff = new TimeDiff(totalTimeDiff.getTimeDiff() + timeToNextStop.getTimeDiff());
                 int capacity = lineScanner.nextInt();
                 Map<Time, Integer> numOfPassengers = new HashMap<>();
                 for (Time startTime : startingTimes) {
                     Time newTime = new Time(startTime.getTime() + totalTimeDiff.getTimeDiff());
-                    numOfPassengers.put(newTime, linesScanner.nextInt());
+                    int num = lineScanner.nextInt();
+                    numOfPassengers.put(newTime, num);
                 }
-                Optional<LineSegmentInterface> lineSegmentToReturn = Optional.of(new LineSegment(timeToNextStop, numOfPassengers, capacity, lineName, nextStop.get(), segmentIndex));
+                Optional<LineSegmentInterface> lineSegmentToReturn;
+                if (nextStop.isPresent()) {
+                    lineSegmentToReturn = Optional.of(new LineSegment(timeToNextStop, numOfPassengers, capacity, lineName, nextStop.get(), segmentIndex));
+                }
+                else lineSegmentToReturn = Optional.of(new LineSegment(timeToNextStop, numOfPassengers, capacity, lineName, null, segmentIndex));
                 lineSegments.add(lineSegmentToReturn.get());
                 return lineSegmentToReturn;
             }
@@ -185,7 +203,6 @@ public class FileLinesFactory implements LinesFactoryInterface {
                 lineSegments.add(lineSegment);
             }
         }
-
         lineSegments.removeAll(segmentsToBeRemoved);
         lineSegments.addAll(segmentsToBeUpdated);
         //get files which need to be updated
