@@ -1,9 +1,10 @@
 package main;
 
 import datatypes.*;
-import exceptions.AlreadyLoadedLineException;
 import database.LinesFactoryInterface;
+import exceptions.FullBusException;
 import exceptions.NegativeCapacityException;
+import exceptions.NegativeSegmentIndexException;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -12,6 +13,12 @@ public class Lines implements LinesInterface {
 
     private HashMap<LineName, LineInterface> lines;
     private final LinesFactoryInterface linesFactory;
+
+    //constructor for tests purposes
+    public Lines(Map<LineName, LineInterface> lines) {
+        this.lines = new HashMap<>(lines);
+        this.linesFactory = null;
+    }
 
     public Lines(LinesFactoryInterface linesFactory) {
         this.linesFactory = linesFactory;
@@ -24,7 +31,7 @@ public class Lines implements LinesInterface {
     }
 
     @Override
-    public void updateReachable(List<LineName> lineNameList, StopName stopName, Time time) throws AlreadyLoadedLineException, FileNotFoundException, NegativeCapacityException {
+    public void updateReachable(List<LineName> lineNameList, StopName stopName, Time time) throws FileNotFoundException, NegativeCapacityException, NegativeSegmentIndexException {
         for (LineName line : lineNameList) {
             if (!lines.containsKey(line)) {
                 loadLine(line);
@@ -34,7 +41,7 @@ public class Lines implements LinesInterface {
     }
 
     @Override
-    public StopName updateCapacityAndGetPrevious(LineName lineName, StopName stopName, Time time) throws AlreadyLoadedLineException, FileNotFoundException, NegativeCapacityException {
+    public StopName updateCapacityAndGetPreviousStop(LineName lineName, StopName stopName, Time time) throws FileNotFoundException, NegativeCapacityException, FullBusException, NegativeSegmentIndexException {
         if (!lines.containsKey(lineName)) {
             loadLine(lineName);
         }
@@ -46,10 +53,13 @@ public class Lines implements LinesInterface {
         lines = new HashMap<>();
     }
 
-    private void loadLine(LineName lineName) throws AlreadyLoadedLineException, FileNotFoundException, NegativeCapacityException {
+    @Override
+    public void loadLine(LineName lineName) throws FileNotFoundException, NegativeCapacityException, NegativeSegmentIndexException {
         if (isLineLoaded(lineName)) {
-            throw new AlreadyLoadedLineException(lineName);
+            System.out.println("Line has already been loaded.");
+            return;
         }
+        assert linesFactory != null; //due to test constructor
         Optional<LineInterface> line = linesFactory.createLine(lineName);
         if (line.isEmpty()) {
             throw new NoSuchElementException("Such line does not exist in memory/file.");
@@ -57,16 +67,24 @@ public class Lines implements LinesInterface {
         lines.put(lineName, line.get());
     }
 
-    /* NOT DONE YET //TODO */
-    public void updateSegments() {
-        //linesFactory.updateDatabase(segments);
+    @Override
+    public void updateLineSegments() throws FileNotFoundException {
+        List<LineSegmentInterface> segmentsToUpdate = new ArrayList<>();
+        for (LineName line : lines.keySet()) {
+            List<LineSegmentInterface> lineSegmentsForLine = lines.get(line).getLineSegments(); //get all lineSegments for line
+            for (LineSegmentInterface lineSegment : lineSegmentsForLine) {
+                if (lineSegment.wasUpdated()) { //if lineSegment was updated, add to list of segments, which need to be updated in database
+                    segmentsToUpdate.add(lineSegment);
+                    lineSegment.wasNotUpdated(); //set back to not updated
+                }
+            }
+        }
+        assert linesFactory != null; //due to test constructor
+        linesFactory.updateDatabase(segmentsToUpdate);
     }
 
-    /*
-    public LineInterface getLine(LineName lineName) {
-        if (!lines.containsKey(lineName)) {
-            LineInterface line = linesFactory.createLine()
-        }
+    @Override
+    public Map<LineName, LineInterface> getLines() {
+        return lines;
     }
-    */
 }
