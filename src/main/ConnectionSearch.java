@@ -17,26 +17,25 @@ public class ConnectionSearch {
     }
 
     public ConnectionData search(StopName from, StopName to, Time time) {
+        ConnectionData connection = null;
         try {
-            ConnectionData connection = new ConnectionData();
-            stops.setStartingStop(from, time);
-            LinkedList<StopName> earliestStopsFrom = new LinkedList<>();
-            earliestStopsFrom.add(from);
-            while (!earliestStopsFrom.contains(to)) {
-                do {
-                    StopName stop = earliestStopsFrom.removeLast();
-                    List<LineName> linesFromStop = stops.getLines(stop);
-                    lines.updateReachable(linesFromStop, stop, time);
-                } while (!earliestStopsFrom.isEmpty());
-                Optional<Pair<StopName, Time>> connectionData = stops.earliestReachableStopAfter(time);
-                if (connectionData.isEmpty()) {
-                    return null;
+            boolean existsPath = existsPath(from, to, time, stops, lines);
+            if (existsPath) {
+                connection = new ConnectionData();
+                StopName previousStop = to;
+                while (!previousStop.equals(from)) {
+                    Pair<Time, LineName> data = stops.getReachableAt(previousStop);
+                    connection.addToConnection(data.getSecond(), previousStop, data.getFirst());
+                    //update capacity and get previous stop
+                    if (!previousStop.equals(from)) {
+                        previousStop = lines.updateCapacityAndGetPreviousStop(data.getSecond(), previousStop, data.getFirst());
+                    }
                 }
-                earliestStopsFrom.add(connectionData.get().getFirst());
+                //add finish
+                connection.addToConnection(null, previousStop, time);
             }
-            return connection;
         }
-        catch (AlreadyLoadedStopException | AlreadyLoadedLineException | FileNotFoundException | NegativeCapacityException e) {
+        catch (FileNotFoundException | NegativeCapacityException | FullBusException | NegativeSegmentIndexException e) {
             System.out.println(e.getMessage());
             return null;
         }
@@ -44,6 +43,28 @@ public class ConnectionSearch {
             lines.clean();
             stops.clean();
         }
+        return connection;
+    }
 
+    private static boolean existsPath(StopName from, StopName to, Time time, StopsInterface stops, LinesInterface lines) {
+        try {
+            stops.setStartingStop(from, time);
+            List<LineName> getLinesFrom =  new LinkedList<>(stops.getLines(from));
+            lines.updateReachable(getLinesFrom, from, time);
+            Optional<Pair<StopName, Time>> earliestReachableStopAfter = stops.earliestReachableStopAfter(time);
+            while (earliestReachableStopAfter.isPresent()) {
+                StopName earliestReachable = earliestReachableStopAfter.get().getFirst();
+                Time earliestReachableTime = earliestReachableStopAfter.get().getSecond();
+                if (earliestReachable.getName().equals(to.getName())) {
+                    return true;
+                }
+                earliestReachableStopAfter = stops.earliestReachableStopAfter(earliestReachableTime);
+            }
+        }
+        catch (FileNotFoundException | NegativeCapacityException | NegativeSegmentIndexException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return false;
     }
 }
