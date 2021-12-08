@@ -9,5 +9,5 @@
 - Finished necessary methods
 - Added multiple tests
 - Made huge refactors for better understanding of code
-- Fixed mistakes, added and remove exceptions where needed
+- Fixed mistakes, added and removed exceptions where needed
 - Added .xlsx "line-template" tutorial, how lines are stored in .txt
