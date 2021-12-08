@@ -38,10 +38,9 @@ public class Stop implements StopInterface {
     @Override
     public void updateReachableAt(Time time, LineName lineName) {
         Time newTime = Optional.ofNullable(time).orElseThrow(NullPointerException::new);
-        Optional<LineName> newLineName = Optional.of(lineName);
         if (newTime.getTime() < reachableAt.getTime()) {
             reachableAt = newTime;
-            newLineName.ifPresent(name -> reachableVia = name);
+            reachableVia = lineName;
         }
     }
 
