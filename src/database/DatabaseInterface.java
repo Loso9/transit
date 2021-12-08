@@ -1,15 +1,16 @@
 package database;
 
 import java.util.*;
-import datatypes.*;
+import datatypes.LineName;
+import datatypes.StopName;
 import main.LineSegmentInterface;
 import main.*;
 
 public interface DatabaseInterface {
+    List<LineName> readLineNames();
+    List<StopName> readStopNames();
     List<LineInterface> readLines();
-    List<Quadruplet<LineName, StopName, List<LineSegmentInterface>, List<Time>>> readLinesAsQuadruplets();
     List<StopInterface> readStops();
-    List<Pair<StopName, List<LineName>>> readStopsAsPairs();
-    List<Pair<LineName, List<LineSegmentInterface>>> readSegments();
-    List<Quintuplet<TimeDiff, Map<Time, Integer>, Integer, LineName, StopInterface>> readSegmentsAsQuintuplets();
+    List<LineSegmentInterface> readSegments();
+
 }
