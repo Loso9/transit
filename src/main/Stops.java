@@ -8,7 +8,13 @@ import java.util.*;
 public class Stops implements StopsInterface {
 
     private final StopsFactoryInterface stopsFactory;
-    private HashMap<StopName, StopInterface> stops;
+    private Map<StopName, StopInterface> stops;
+
+    //constructor for test purposes
+    public Stops(Map<StopName, StopInterface> stops) {
+        this.stops = new HashMap<>(stops);
+        this.stopsFactory = null;
+    }
 
     public Stops(StopsFactoryInterface stopsFactory) {
         this.stopsFactory = stopsFactory;
@@ -84,10 +90,15 @@ public class Stops implements StopsInterface {
             System.out.println("Stop " + stopName.getName() + " has already been loaded");
             return;
         }
+        assert stopsFactory != null; //due to test constructor
         Optional<StopInterface> stop = stopsFactory.createStop(stopName);
         if (stop.isEmpty()) {
             throw new NoSuchElementException("Such stop does not exist in memory/file");
         }
         stops.put(stopName, stop.get());
+    }
+
+    public Map<StopName, StopInterface> getStops() {
+        return stops;
     }
 }
